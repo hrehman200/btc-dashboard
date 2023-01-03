@@ -1,0 +1,38 @@
+*   Trying 185.204.225.28:443...
+* TCP_NODELAY set
+* Connected to rest.coinapi.io (185.204.225.28) port 443 (#0)
+* ALPN, offering http/1.1
+* Cipher selection: ALL:!EXPORT:!EXPORT40:!EXPORT56:!aNULL:!LOW:!RC4:@STRENGTH
+* successfully set certificate verify locations:
+*   CAfile: /private/etc/ssl/certs/cacert.pem
+  CApath: none
+* SSL connection using TLSv1.2 / ECDHE-RSA-AES128-GCM-SHA256
+* ALPN, server accepted to use http/1.1
+* Server certificate:
+*  subject: CN=coinapi.io
+*  start date: Nov 10 10:00:32 2022 GMT
+*  expire date: Feb  8 10:00:31 2023 GMT
+*  subjectAltName: host "rest.coinapi.io" matched cert's "*.coinapi.io"
+*  issuer: C=US; O=Let's Encrypt; CN=R3
+*  SSL certificate verify ok.
+> GET /v1/exchangerate/BTC/USD/history?period_id=1HRS&time_start=2022-12-01T00:00:00&time_end=2022-12-31T00:00:00&limit=100000 HTTP/1.1
+Host: rest.coinapi.io
+Accept-Encoding: deflate, gzip
+Accept: application/json
+X-CoinAPI-Key: F41FE02B-20B8-4630-99F3-C4B4E88736E7
+Content-Type: application/x-www-form-urlencoded
+
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 429 Too Many Requests
+< content-type: application/json
+< date: Tue, 03 Jan 2023 13:29:27 GMT
+< transfer-encoding: chunked
+< x-concurrencylimit-limit: 1
+< x-concurrencylimit-remaining: 1
+< x-ratelimit-used: 1002
+< x-ratelimit-overage: disabled
+< x-ratelimit-limit: 100
+< x-ratelimit-remaining: -902
+< x-ratelimit-reset: 2023-01-04T13:29:27.8879394Z
+< 
+* Connection #0 to host rest.coinapi.io left intact
