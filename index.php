@@ -93,6 +93,9 @@ class MyDateTime extends \DateTime implements \JsonSerializable
         <div
           class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
           <h1 class="h2">Dashboard</h1>
+
+          <input type="text" class="form-control w-25 fe" id="dateRange" />
+
           <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group me-2">
               <button type="button" data-time="hour" class="btn btn-sm btn-outline-secondary btn-time">
@@ -111,16 +114,9 @@ class MyDateTime extends \DateTime implements \JsonSerializable
           </div>
         </div>
 
-        <!-- <canvas
-            class="my-4 w-100"
-            id="myChart"
-            width="900"
-            height="380"
-          ></canvas> -->
-
         <div id="newChart"></div>
 
-        <h3>Section title</h3>
+        
         <div class="table-responsive">
           <table class="table table-striped table-sm">
             <thead>
@@ -263,7 +259,14 @@ class MyDateTime extends \DateTime implements \JsonSerializable
 
   <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
 
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
   <script>
+
+    $('#dateRange').daterangepicker();
+
     function createSimpleSwitcher(
       items,
       activeItem,
