@@ -74,6 +74,7 @@ require_once __DIR__ . '/config.php';
   <link href="dashboard.css" rel="stylesheet" />
 
   <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+  <script src="js/table2csv.min.js"></script>
 </head>
 
 <?php
@@ -114,133 +115,22 @@ class MyDateTime extends \DateTime implements \JsonSerializable
           </div>
         </div>
 
-        <div id="newChart"></div>
+        <div id="newChart" style="m-3"></div>
 
-        
+
         <div class="table-responsive">
           <table class="table table-striped table-sm">
             <thead>
               <tr>
-                <th scope="col">#</th>
-                <th scope="col">Header</th>
-                <th scope="col">Header</th>
-                <th scope="col">Header</th>
-                <th scope="col">Header</th>
+                <th scope="col">Date Time</th>
+                <th scope="col">
+                  Price
+                  <button class="btn btn-sm btn-primary btn-csv float-end">CSV</button>
+                </th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>1,001</td>
-                <td>random</td>
-                <td>data</td>
-                <td>placeholder</td>
-                <td>text</td>
-              </tr>
-              <tr>
-                <td>1,002</td>
-                <td>placeholder</td>
-                <td>irrelevant</td>
-                <td>visual</td>
-                <td>layout</td>
-              </tr>
-              <tr>
-                <td>1,003</td>
-                <td>data</td>
-                <td>rich</td>
-                <td>dashboard</td>
-                <td>tabular</td>
-              </tr>
-              <tr>
-                <td>1,003</td>
-                <td>information</td>
-                <td>placeholder</td>
-                <td>illustrative</td>
-                <td>data</td>
-              </tr>
-              <tr>
-                <td>1,004</td>
-                <td>text</td>
-                <td>random</td>
-                <td>layout</td>
-                <td>dashboard</td>
-              </tr>
-              <tr>
-                <td>1,005</td>
-                <td>dashboard</td>
-                <td>irrelevant</td>
-                <td>text</td>
-                <td>placeholder</td>
-              </tr>
-              <tr>
-                <td>1,006</td>
-                <td>dashboard</td>
-                <td>illustrative</td>
-                <td>rich</td>
-                <td>data</td>
-              </tr>
-              <tr>
-                <td>1,007</td>
-                <td>placeholder</td>
-                <td>tabular</td>
-                <td>information</td>
-                <td>irrelevant</td>
-              </tr>
-              <tr>
-                <td>1,008</td>
-                <td>random</td>
-                <td>data</td>
-                <td>placeholder</td>
-                <td>text</td>
-              </tr>
-              <tr>
-                <td>1,009</td>
-                <td>placeholder</td>
-                <td>irrelevant</td>
-                <td>visual</td>
-                <td>layout</td>
-              </tr>
-              <tr>
-                <td>1,010</td>
-                <td>data</td>
-                <td>rich</td>
-                <td>dashboard</td>
-                <td>tabular</td>
-              </tr>
-              <tr>
-                <td>1,011</td>
-                <td>information</td>
-                <td>placeholder</td>
-                <td>illustrative</td>
-                <td>data</td>
-              </tr>
-              <tr>
-                <td>1,012</td>
-                <td>text</td>
-                <td>placeholder</td>
-                <td>layout</td>
-                <td>dashboard</td>
-              </tr>
-              <tr>
-                <td>1,013</td>
-                <td>dashboard</td>
-                <td>irrelevant</td>
-                <td>text</td>
-                <td>visual</td>
-              </tr>
-              <tr>
-                <td>1,014</td>
-                <td>dashboard</td>
-                <td>illustrative</td>
-                <td>rich</td>
-                <td>data</td>
-              </tr>
-              <tr>
-                <td>1,015</td>
-                <td>random</td>
-                <td>tabular</td>
-                <td>information</td>
-                <td>text</td>
-              </tr>
+            <tbody id="tblPrice">
+
             </tbody>
           </table>
         </div>
@@ -264,8 +154,6 @@ class MyDateTime extends \DateTime implements \JsonSerializable
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
   <script>
-
-    $('#dateRange').daterangepicker();
 
     function createSimpleSwitcher(
       items,
@@ -386,6 +274,11 @@ class MyDateTime extends \DateTime implements \JsonSerializable
         bottomColor: "rgba(76, 175, 80, 0.04)",
         lineColor: "rgba(76, 175, 80, 1)",
         lineWidth: 2,
+        priceFormat: {
+          type: 'price',
+          precision: 6,
+          minMove: 0.000001,
+        },
       });
       console.log(seriesesData.get(interval))
       areaSeries.setData(seriesesData.get(interval));
@@ -393,7 +286,7 @@ class MyDateTime extends \DateTime implements \JsonSerializable
       chart.timeScale().fitContent();
     }
 
-    syncToInterval(intervals[0]);
+    syncToInterval(intervals[4]);
 
     // Make Chart Responsive with screen resize
     new ResizeObserver((entries) => {
@@ -407,25 +300,120 @@ class MyDateTime extends \DateTime implements \JsonSerializable
     $('.btn-time').on('click', function (e) {
       $('.btn-time').removeClass('active')
       $(e.target).addClass('active')
+
+      var startDate = $('#dateRange').data('daterangepicker').startDate.unix();
+      var endDate = $('#dateRange').data('daterangepicker').endDate.unix();
+
+      let filteredByDateData = []
       let timing = $(e.target).data('time');
       switch (timing) {
         case 'hour':
+          filteredByDateData = hourData.filter((item) => item.time >= startDate && item.time <= endDate)
+          seriesesData.set('1H', filteredByDateData)
           syncToInterval(intervals[0]);
           break;
         case 'day':
+          filteredByDateData = dayData.filter((item) => item.time >= startDate && item.time <= endDate)
+          seriesesData.set('1D', filteredByDateData)
           syncToInterval(intervals[1]);
           break;
         case 'week':
           syncToInterval(intervals[1]);
           break;
         case 'month':
+          filteredByDateData = monthData.filter((item) => item.time >= startDate && item.time <= endDate)
+          seriesesData.set('1M', filteredByDateData)
           syncToInterval(intervals[3]);
           break;
         case 'year':
+          filteredByDateData = yearData.filter((item) => item.time >= startDate && item.time <= endDate)
+          seriesesData.set('1Y', filteredByDateData)
           syncToInterval(intervals[4]);
           break;
       }
+      fillTable(filteredByDateData)
     });
+
+    $('.btn-csv').on('click', function (e) {
+      var titles = [];
+      var data = [];
+
+      $('.table tr').each(function () {
+        data.push($(this));
+      });
+
+      csv_data = []
+
+      data.forEach(function (item, index) {
+        td = item[0].children
+        for (i = 0; i < td.length; i++) {
+          csv_data.push(td[i].innerText)
+        }
+        csv_data.push('\r\n')
+      })
+
+      var downloadLink = document.createElement("a");
+      var blob = new Blob(["\ufeff", csv_data]);
+      var url = URL.createObjectURL(blob);
+      downloadLink.href = url;
+      downloadLink.download = "btc-price.csv";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    })
+
+    function updateTable(startDate, endDate) {
+      let timing = $('.btn-time.active').data('time') || 'year';
+      let filteredByDateData = []
+      switch (timing) {
+        case 'hour':
+          console.log(startDate)
+          filteredByDateData = hourData.filter((item) => item.time >= startDate && item.time <= endDate)
+          seriesesData.set('1H', filteredByDateData)
+          syncToInterval(intervals[0]);
+          break;
+        case 'day':
+          filteredByDateData = dayData.filter((item) => item.time >= startDate && item.time <= endDate)
+          seriesesData.set('1D', filteredByDateData)
+          syncToInterval(intervals[1]);
+          break;
+        case 'week':
+          syncToInterval(intervals[1]);
+          break;
+        case 'month':
+          filteredByDateData = monthData.filter((item) => item.time >= startDate && item.time <= endDate)
+          seriesesData.set('1M', filteredByDateData)
+          syncToInterval(intervals[3]);
+          break;
+        case 'year':
+          filteredByDateData = yearData.filter((item) => item.time >= startDate && item.time <= endDate)
+          seriesesData.set('1Y', filteredByDateData)
+          syncToInterval(intervals[4]);
+          break;
+      }
+      fillTable(filteredByDateData)
+    }
+
+    function fillTable(data) {
+      $('.switcher').hide()
+      $('#tblPrice').html('')
+      data.forEach((item, index) => {
+        $('#tblPrice').append(`<tr>
+          <td>${moment.unix(item.time).format("MM/DD/YYYY HH:mm:ss")}</td>
+          <td>$${parseFloat(item.value).toFixed(2)}</td>
+        </tr>`)
+      })
+    }
+
+    function onDateChange(start, end, label) {
+      updateTable(start.unix(), end.unix())
+    }
+
+    $('#dateRange').daterangepicker({
+      startDate: moment('2014-05-15')
+    }, onDateChange);
+
+    onDateChange(moment('2014-05-15'), moment('2023-07-10'))
   </script>
 </body>
 

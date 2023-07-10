@@ -13,20 +13,23 @@ $yearly = DB::query("SELECT * FROM `btc_prices`  group by YEAR(period) ORDER BY 
 
 $hourly_data = [];
 foreach ($hourly as $h) {
-    $hourly_data[] = ['time' => strtotime($h['period']), 'value' => $h['price']];
+    $hourly_data[] = ['time' => strtotime($h['period']), 'value' => (float)$h['price'], 'period' => $h['period']];
 }
+// echo '<pre>';
+// print_r($hourly_data);
+// echo '</pre>';
 
 $daily_data = [];
 foreach ($daily as $h) {
-    $daily_data[] = ['time' => strtotime($h['period']), 'value' => $h['price']];
+    $daily_data[] = ['time' => strtotime($h['period']), 'value' => (float)$h['price']];
 }
 
 $monthly_data = [];
 foreach ($monthly as $h) {
-    $monthly_data[] = ['time' => strtotime($h['period']), 'value' => $h['price']];
+    $monthly_data[] = ['time' => strtotime($h['period']), 'value' => (float)$h['price']];
 }
 
 $yearly_data = [];
 foreach ($yearly as $h) {
-    $yearly_data[] = ['time' => strtotime($h['period']), 'value' => $h['price']];
+    $yearly_data[] = ['time' => strtotime($h['period']), 'value' => (float)$h['price']];
 }
